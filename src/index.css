@@ -3,10 +3,66 @@ body {
   padding: 0;
   font-family: Arial, Helvetica, sans-serif;
   background-color: #000;
-  color: #fff;
+}
+
+.app {
+  min-height: 70vh;
+  background-color: #000;
 }
 
 ::selection {
   color: #fff;
   background: #c3e88d;
+}
+
+h2,
+h3 {
+  color: #c3e88d;
+}
+
+.connectionType,
+.connection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+}
+
+.buttonOutline {
+  outline: none;
+  border: none;
+  cursor: pointer;
+  color: #c3e88d;
+  background: #000;
+  border: 2px solid #c3e88d;
+  padding: 1em 2em;
+  margin-top: 2em;
+  font-weight: bold;
+  transition: background 0.5s, color 0.3s;
+}
+
+.buttonOutline:hover,
+.buttonOutline:focus {
+  background: #c3e88d;
+  color: #000;
+  transition: background 0.5s, color 0.3s;
+}
+
+.formGroup {
+  margin: 1rem 2rem 0 2rem;
+}
+
+.formGroup > input[type="text"] {
+  background-color: #000;
+  outline: none;
+  border: none;
+  border-bottom: 2px solid #c3e88d;
+  color: #c3e88d;
+  padding: 5px;
+  width: 200px;
+}
+
+video {
+  width: 99.7%;
 }
