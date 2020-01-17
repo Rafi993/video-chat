@@ -19,9 +19,9 @@ const Connection = ({
   const handleSubmit = useCallback(
     event => {
       event.preventDefault();
-      startChatting();
+      startChatting(otherUserId);
     },
-    [startChatting]
+    [otherUserId, startChatting]
   );
 
   return (

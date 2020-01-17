@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import SimplePeer from "simple-peer";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import ConnectionType from "./ConnectionType";
 import Connection from "./Connection";
 
-let peer = null;
+let peer = {};
 
 const App = () => {
   // Storing the state at root component like this will cause unwanted re-renders
@@ -13,64 +15,97 @@ const App = () => {
   const [chatting, startChatting] = useState(false);
   const [user1Id, setUser1Id] = useState("");
   const [user2Id, setUser2Id] = useState("");
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    navigator.getUserMedia(
-      {
-        video: true,
-        audio: false
-      },
-      stream => {
-        peer = new SimplePeer({
-          initiator: connectionType === "newConnection",
-          trickle: false,
-          stream
-        });
+  const handleChat = useCallback(
+    otherUserId => {
+      startChatting(true);
+      peer.signal(JSON.parse(otherUserId));
+      setUser2Id(otherUserId);
+    },
+    [setUser2Id, startChatting]
+  );
 
-        peer.on("signal", data => {
-          setUser1Id(JSON.stringify(data));
-        });
+  const handleConnection = useCallback(
+    type => {
+      navigator.getUserMedia(
+        {
+          video: true,
+          audio: true
+        },
+        stream => {
+          if (type === "newConnection") {
+            peer = new SimplePeer({
+              initiator: type === "newConnection",
+              trickle: false,
+              stream
+            });
+          } else {
+            peer = new SimplePeer({
+              initiator: type === "newConnection",
+              trickle: false,
+              stream
+            });
+          }
 
-        peer.on("stream", otherUserStream => {
-          const video = document.getElementById("video");
-          video.srcObject = otherUserStream;
-          video.play();
-        });
+          peer.on("signal", data => {
+            setUser1Id(JSON.stringify(data));
+          });
 
-        peer.on("error", err => setError("Unable to use users video camera"));
-      },
-      error => {
-        console.log(error);
-        setError("Unable to use users video camera2");
-      }
-    );
-  }, [connectionType, setUser1Id, setError]);
+          peer.on("stream", otherUserStream => {
+            const video = document.getElementById("video");
+            video.srcObject = otherUserStream;
+            video.play();
+          });
 
-  const handleChat = useCallback(() => {
-    startChatting(true);
-    peer.signal(JSON.parse(user2Id));
-  }, [user2Id, startChatting]);
+          peer.on("error", err => toast.error("Unable start video chat"));
+        },
+        error => {
+          console.log(error);
+          toast.error("Unable start video chat");
+        }
+      );
+      setConnectionType(type);
+    },
+    [setConnectionType]
+  );
 
   return (
     <div className="app">
       {chatting === false && connectionType === null && (
-        <ConnectionType setConnectionType={setConnectionType} />
+        <ConnectionType setConnectionType={handleConnection} />
       )}
-
       {chatting === false && connectionType !== null && (
-        <Connection
-          setConnectionType={setConnectionType}
-          startChatting={handleChat}
-          user1Id={user1Id}
-          user2Id={user2Id}
-          setUser2Id={setUser2Id}
-        />
+        <>
+          <Connection
+            setConnectionType={setConnectionType}
+            startChatting={handleChat}
+            user1Id={user1Id}
+            user2Id={user2Id}
+            setUser2Id={setUser2Id}
+          />
+        </>
       )}
 
-      {chatting && <video id="video"></video>}
+      {chatting && connectionType !== null && (
+        <>
+          <h4>
+            YourId: <span className="user1Id">{user1Id}</span>
+          </h4>
+          <video id="video"></video>
 
-      {error && <h3>{error}</h3>}
+          <ToastContainer
+            position="bottom-right"
+            autoClose={5000}
+            hideProgressBar
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnVisibilityChange
+            draggable
+            pauseOnHover
+          />
+        </>
+      )}
     </div>
   );
 };

@@ -64,5 +64,24 @@ h3 {
 }
 
 video {
-  width: 99.7%;
+  width: 100%;
+  height: 87vh;
+}
+
+h4 {
+  margin: 0 auto;
+  padding-bottom: 20px;
+  color: #c3e88d;
+  margin-top: 0.5em;
+}
+
+.user1Id {
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #c3e88d;
+  width: 95%;
+  overflow: hidden;
+  font-weight: normal;
+  margin-top: 0.5em;
 }
