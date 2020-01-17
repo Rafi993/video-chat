@@ -89,7 +89,7 @@ const App = () => {
       {chatting && connectionType !== null && (
         <>
           <h4>
-            YourId: <span className="user1Id">{user1Id}</span>
+            <span className="user1Id">{user1Id}</span>
           </h4>
           <video id="video"></video>
 
